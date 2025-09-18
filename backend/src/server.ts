@@ -2,6 +2,8 @@ import express from "express";
 import OpenAI from 'openai';
 import mongoose from "mongoose";
 import cors from "cors";
+import authRoutes from "./routes/authRoute.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = process.env.PORT;
@@ -12,10 +14,11 @@ const port = process.env.PORT;
 
 app.use(cors({
     origin: ["http://localhost:3000"],
-    methods: ["GET", "POST", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 
 const MONGO_DB_URI = process.env.DB_URI;
@@ -28,9 +31,11 @@ if (MONGO_DB_URI) {
     .catch((err) => console.log(err))
 }
 
-app.get("/", (req, res) => {
-  res.send("Hello")
-})
+app.use("/api/auth", authRoutes);
+
+// app.get("/", (req, res) => {
+//   res.send("Hello")
+// })
 
 // app.get("/test", async (req, res) => {
 //   const response = await client.responses.create({
