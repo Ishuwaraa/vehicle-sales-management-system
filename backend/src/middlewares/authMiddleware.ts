@@ -15,8 +15,8 @@ interface JwtPayload {
     role: string;
 }
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "accesstokensecret";
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || "refreshtokensecret";
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET!;
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET!;
 
 const genAccessToken = (id: string, role: string) => jwt.sign({ id, role }, accessTokenSecret, { expiresIn: '5m' });
 const genRefreshToken = (id: string, role: string) => jwt.sign({ id, role }, refreshTokenSecret, { expiresIn: '3d' });

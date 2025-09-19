@@ -1,31 +1,50 @@
-import mongoose from "mongoose";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
-const Schema = mongoose.Schema;
+export enum UserRole {
+    ADMIN = "admin",
+    CUSTOMER = "customer",
+}
 
-const userSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    phone: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    role: {
-        type: String,
-        required: true,
-        enum: ["customer", "admin"],
-        default: 'customer'
-    }
-}, { timestamps: true });
+@Entity()
+export default class User {
+    @PrimaryGeneratedColumn("uuid")
+    id!: string
 
-export default mongoose.model("User", userSchema);
+    @Column({
+        type: "varchar",
+        length: 255,
+    })
+    name!: string
+
+    @Column({
+        type: "varchar",
+        length: 255,
+        unique: true,
+    })
+    email!: string
+
+    @Column({
+        type: "varchar",
+        length: 20,
+    })
+    phone!: string
+
+    @Column({
+        type: "varchar",
+        length: 255,
+    })
+    password!: string
+
+    @Column({
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.CUSTOMER,
+    })
+    role!: UserRole
+
+    @CreateDateColumn()
+    createdAt!: Date
+
+    @UpdateDateColumn()
+    updatedAt!: Date
+}

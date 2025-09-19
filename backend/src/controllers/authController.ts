@@ -1,9 +1,10 @@
-import userModel from "../models/userModel.js";
+import User, { UserRole } from "../models/userModel.js"
 import { genAccessToken, genRefreshToken } from "../middlewares/authMiddleware.js";
 import bcrypt from "bcrypt";
 import { Request, Response, CookieOptions } from 'express';
 import { UserLogin, UserRegister } from "../types/user.types.js";
 import jwt, { VerifyErrors } from 'jsonwebtoken';
+import { addUser, findUserByEmail, findUserById } from "../repositories/userRepository.js";
 
 interface JwtPayload {
     id: string;
@@ -27,7 +28,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
     const convEmail = email.toLowerCase().trim();
 
     try{
-        const exists = await userModel.findOne({ email: convEmail });
+        const exists = await findUserByEmail(convEmail);
         if(exists) {
             res.status(409).json({ message: 'Email already exists' });
             return;
@@ -36,15 +37,15 @@ const register = async (req: Request, res: Response): Promise<void> => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);                
 
-        const user = new userModel({ name, email: convEmail, phone, password: hash });
-        const newUser = await user.save();
+        
+        const newUser = await addUser({ name, email: convEmail, phone, password: hash, role: UserRole.ADMIN });
         if(!newUser) {
             res.status(500).json({ message: 'Account creation failed' });
             return;
         }
 
-        const accessToken = genAccessToken(newUser._id.toString(), newUser.role);
-        const refreshToken = genRefreshToken(newUser._id.toString(), newUser.role);
+        const accessToken = genAccessToken(newUser.id, newUser.role);
+        const refreshToken = genRefreshToken(newUser.id, newUser.role);
 
         res.cookie("refreshToken", refreshToken, cookieOptions);   
         res.status(201).json({ accessToken, name: newUser.name, email: newUser.email });
@@ -64,7 +65,7 @@ const login = async(req: Request, res: Response): Promise<void> => {
     const convEmail = email.toLowerCase().trim();
 
     try {
-        const user = await userModel.findOne({ email: convEmail });
+        const user = await findUserByEmail(convEmail);
         if(!user) {
             res.status(404).json({ message: 'Invalid email or password' });
             return;
@@ -76,11 +77,11 @@ const login = async(req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const accessToken = genAccessToken(user._id.toString(), user.role);
-        const refreshToken = genRefreshToken(user._id.toString(), user.role);
+        const accessToken = genAccessToken(user.id, user.role);
+        const refreshToken = genRefreshToken(user.id, user.role);
         
         res.cookie("refreshToken", refreshToken, cookieOptions);
-        res.status(200).json({ accessToken, id: user._id.toString()});
+        res.status(200).json({ accessToken, id: user.id});
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
@@ -128,14 +129,14 @@ const refreshAccessToken = (req: Request, res: Response): void => {
         const payload = data as JwtPayload;
 
         try {
-            const user = await userModel.findById(payload.id);
+            const user = await findUserById(payload.id);
             if(!user) {
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
     
-            const accessToken = genAccessToken(user._id.toString(), user.role);
-            const refreshToken = genRefreshToken(user._id.toString(), user.role);
+            const accessToken = genAccessToken(user.id, user.role);
+            const refreshToken = genRefreshToken(user.id, user.role);
     
             res.cookie('refreshToken', refreshToken, cookieOptions)
             res.status(200).json({ accessToken });
