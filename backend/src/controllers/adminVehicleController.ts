@@ -2,6 +2,11 @@ import { Request, Response } from 'express';
 import { AddVehicle, UpdateVehicle } from '../types/vehicle.types.js';
 import { deleteImages, getArrayOfImageUrls } from '../middlewares/awsMiddleware.js';
 import { createVehicle, deleteVehicleById, findAllVehicles, findVehicleById, updateVehicleById } from '../repositories/vehicleRepository.js';
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
 
 const isNotAnAdmin = (req: Request): Boolean => {
     return !(req.userRole === 'admin');
@@ -69,7 +74,45 @@ const getVehicleById = async (req: Request, res: Response) => {
     }
 }
 
-//generate AI description
+//TODO: improve guardrails
+const generateAIDescription = async (req: Request, res: Response) => {
+    const vehicle: AddVehicle = req.body;
+
+    if (isNotAnAdmin(req)) {
+        return res.status(403).json({ message: "Permission denied"});
+    }
+
+    try {
+        const response = await client.responses.create({
+            model: "gpt-4.1-nano",
+            instructions: `
+                You are a professional vehicle sales assistant in Sri Lanka. 
+                Write short, persuasive, and creative sales descriptions for vehicles listed for sale. 
+                Mention the brand, model, year, engine size, color, and highlight key selling points like fuel efficiency, performance, or reliability.
+                Rules:
+                    - Only use the details provided.
+                    - Do not invent or assume extra specifications.
+                    - Keep it professional but friendly, under 80 words.
+                    - Use LKR for the price.
+            `,
+            input: `
+                Generate a sales description for this vehicle:
+                - Type: ${vehicle.vehicleType}
+                - Brand: ${vehicle.brand}
+                - Model: ${vehicle.modelName}
+                - Color: ${vehicle.color}
+                - Engine Size: ${vehicle.engineSize}
+                - Year: ${vehicle.year}
+                - Price: LKR${vehicle.price}.
+                Write it like a car dealership would advertise it to attract buyers.
+            `,
+        });
+
+        res.status(200).json({ description: response.output_text })
+    } catch (err: any) {
+        res.status(500).json({ message: err.message });
+    }
+}
 
 const addVehicle = async (req: Request, res: Response) => {
     const data: AddVehicle = req.body;
@@ -167,4 +210,4 @@ const deleteVehicle = async (req: Request, res: Response) => {
     }
 }
 
-export { getAllVehicles, getVehicleById, addVehicle, updateVehicle, deleteVehicle }
+export { getAllVehicles, getVehicleById, generateAIDescription, addVehicle, updateVehicle, deleteVehicle }

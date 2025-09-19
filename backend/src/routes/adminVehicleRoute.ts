@@ -1,5 +1,5 @@
 import express from "express";
-import { addVehicle, deleteVehicle, getAllVehicles, getVehicleById, updateVehicle } from "../controllers/adminVehicleController.js";
+import { addVehicle, deleteVehicle, generateAIDescription, getAllVehicles, getVehicleById, updateVehicle } from "../controllers/adminVehicleController.js";
 import { verifyJWT } from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/awsMiddleware.js";
 
@@ -11,5 +11,6 @@ router.get('/:id', verifyJWT, getVehicleById);
 router.post('/', verifyJWT, upload, addVehicle);
 router.put('/:id', verifyJWT, updateVehicle);
 router.delete('/:id', verifyJWT, deleteVehicle);
+router.post('/generate', verifyJWT, generateAIDescription);
 
 export default router;
