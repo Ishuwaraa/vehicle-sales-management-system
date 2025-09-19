@@ -1,6 +1,8 @@
 import { AppDataSource } from "../data-source.js";
 import Vehicle from "../models/vehicleModel.js";
+import { searchRequest } from "../types/search.types.js";
 import { VehicleList } from "../types/vehicle.types.js";
+import { Like, Between } from 'typeorm';
 
 const getVehicleRepository = () => AppDataSource.getRepository(Vehicle);
 
@@ -33,6 +35,54 @@ export const findAllVehicles = async (sortBy: string = "DESC", pageNo: number = 
 export const findVehicleById = async (id: number): Promise<Vehicle | null> => {
     const vehicleRepository = getVehicleRepository();
     return await vehicleRepository.findOneBy({ id });
+}
+
+export const findVehicleBySearchParam = async (searchRequest: searchRequest): Promise<Vehicle[]> => {
+    const vehicleRepository = getVehicleRepository();
+
+    const searchField = searchRequest.searchField.toLowerCase();
+    let whereClause: any = {};
+    let minPrice: number = 0;
+    let maxPrice: number = 1000;
+
+    switch (searchField) {
+        case 'brand':
+            whereClause = { brand: Like(`%${searchRequest.searchTerm}%`) };
+            break;
+        case 'modelname':
+            whereClause = { modelName: Like(`%${searchRequest.searchTerm}%`) };
+            break;
+        case 'year':
+            const year = parseInt(searchRequest.searchTerm);
+            if (isNaN(year)) {
+                throw new Error('Invalid year value');
+            }
+            whereClause = { year: year };
+            break;
+        case 'vehicletype':
+            whereClause = { vehicleType: Like(`%${searchRequest.searchTerm}%`) };
+            break;
+        case 'price':
+            switch (searchRequest.searchTerm) {
+                case '1000-2000':
+                    minPrice = 1001;
+                    maxPrice = 2000;
+                    break;
+                case 'above 2000':
+                    minPrice = 2001;
+                    maxPrice = 1000000000000;
+                    break;
+            }
+
+            whereClause = { price: Between(minPrice, maxPrice) };
+    }
+
+    const vehicles = await vehicleRepository.find({ 
+        where: whereClause,
+        order: { createdAt: "DESC" }
+    });
+
+    return vehicles;
 }
 
 export const updateVehicleById = async (id: number, vehicleData: Partial<Vehicle>): Promise<Vehicle | null> => {
