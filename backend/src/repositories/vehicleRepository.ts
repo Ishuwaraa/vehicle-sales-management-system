@@ -62,6 +62,12 @@ export const findVehicleBySearchParam = async (searchRequest: searchRequest): Pr
         case 'vehicletype':
             whereClause = { vehicleType: Like(`%${searchRequest.searchTerm}%`) };
             break;
+        case 'color':
+            whereClause = { color: searchRequest.searchTerm };
+            break;
+        case 'enginesize':
+            whereClause = { engineSize: searchRequest.searchTerm };
+            break;
         case 'price':
             switch (searchRequest.searchTerm) {
                 case '1000-2000':

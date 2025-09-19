@@ -57,7 +57,6 @@ const getVehicleById = async (req: Request, res: Response) => {
     }
 }
 
-//TODO: implement filter by
 const searchVehicles = async (req: Request, res: Response) => {
     const searchRequest: searchRequest = req.body;
 
@@ -65,7 +64,7 @@ const searchVehicles = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Search term is required" });
     }
 
-    const validSearchFields = ['brand', 'modelname', 'year', 'vehicletype', 'price'];
+    const validSearchFields = ['brand', 'modelname', 'year', 'vehicletype', 'price', 'color', 'enginesize'];
     const searchField = searchRequest.searchField.toLowerCase();
     
     if (!validSearchFields.includes(searchField)) {
