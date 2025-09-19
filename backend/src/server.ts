@@ -5,6 +5,7 @@ import "reflect-metadata";
 import { initializeDataSource } from "./data-source.js";
 
 import authRoutes from "./routes/authRoute.js";
+import adminVehicleRoutes from "./routes/adminVehicleRoute.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -18,11 +19,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin/vehicle", adminVehicleRoutes);
 
 const initializeApp = async () => {
   try {
     await initializeDataSource();
-    console.log("Data Source has been initialized!")
+    console.log("Data Source has been initialized!");
+    
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
