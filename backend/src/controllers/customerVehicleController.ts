@@ -3,8 +3,9 @@ import { findAllVehicles, findVehicleById, findVehicleBySearchParam } from '../r
 import { getArrayOfImageUrls } from '../middlewares/awsMiddleware.js';
 import { searchRequest } from '../types/search.types.js';
 
+//TODO: remove size here.
+//only send the 1st image url
 const getAllVehicles = async (req: Request, res: Response) => {
-    const sortBy = (req.query.sortBy as string) || "DESC";
     const page = parseInt(req.query.page as string) || 0;
     const size = parseInt(req.query.size as string) || 10;
 
@@ -17,7 +18,7 @@ const getAllVehicles = async (req: Request, res: Response) => {
     }
 
     try {
-        const vehicleList = await findAllVehicles(sortBy, page, size);
+        const vehicleList = await findAllVehicles("DESC", page, size);
 
         await Promise.all(
             vehicleList.vehicles.map(async (vehicle) => {
@@ -61,7 +62,7 @@ const searchVehicles = async (req: Request, res: Response) => {
     const searchRequest: searchRequest = req.body;
 
     if (!searchRequest || !searchRequest.searchField || !searchRequest.searchTerm) {
-        return res.status(400).json({ message: "Search term is required" });
+        return res.status(400).json({ message: "Search term, type and page no is required" });
     }
 
     const validSearchFields = ['brand', 'modelname', 'year', 'vehicletype', 'price', 'color', 'enginesize'];
@@ -72,17 +73,17 @@ const searchVehicles = async (req: Request, res: Response) => {
     }
 
     try {
-        const vehicles = await findVehicleBySearchParam(searchRequest);
+        const vehicleList = await findVehicleBySearchParam(searchRequest);
         
         await Promise.all(
-            vehicles.map(async (vehicle) => {
+            vehicleList.vehicles.map(async (vehicle) => {
                 if (vehicle.images && vehicle.images.length > 0) {
                     vehicle.images = await getArrayOfImageUrls(vehicle.images, 3600);
                 }
             })
         )
 
-        res.status(200).json(vehicles);
+        res.status(200).json(vehicleList);
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }

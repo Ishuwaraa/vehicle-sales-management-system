@@ -23,13 +23,13 @@ export const vehicleService = {
         return { vehicle: response.data, status: response.status };
     },
 
-    searchVehicles: async (searchParams: searchRequest): Promise<{ vehicles: VehicleList | null, status: number, message?: string }> => {
-        const response = await axiosInstance.post(`/vehicle/search?page=${searchParams.page}&size=1`, { data: searchParams });
+    searchVehicles: async (searchRequest: searchRequest): Promise<{ vehicleList: VehicleList | null, status: number, message?: string }> => {
+        const response = await axiosInstance.post('/vehicle/search', searchRequest);
 
         if (response.status !== 200) {
-            return { vehicles: null, status: response.status, message: response.data?.message };
+            return { vehicleList: null, status: response.status, message: response.data?.message };
         }
 
-        return { vehicles: response.data, status: response.status };
+        return { vehicleList: response.data, status: response.status };
     }
 }

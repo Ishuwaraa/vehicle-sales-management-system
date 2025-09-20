@@ -37,7 +37,9 @@ export const findVehicleById = async (id: number): Promise<Vehicle | null> => {
     return await vehicleRepository.findOneBy({ id });
 }
 
-export const findVehicleBySearchParam = async (searchRequest: searchRequest): Promise<Vehicle[]> => {
+export const findVehicleBySearchParam = async (searchRequest: searchRequest): Promise<VehicleList> => {
+    const pageSize = 1;
+    const pageNo = searchRequest.page ? searchRequest.page : 0;
     const vehicleRepository = getVehicleRepository();
 
     const searchField = searchRequest.searchField.toLowerCase();
@@ -83,12 +85,21 @@ export const findVehicleBySearchParam = async (searchRequest: searchRequest): Pr
             whereClause = { price: Between(minPrice, maxPrice) };
     }
 
-    const vehicles = await vehicleRepository.find({ 
+    const [vehicles, total] = await vehicleRepository.findAndCount({ 
         where: whereClause,
-        order: { createdAt: "DESC" }
+        order: { createdAt: "DESC" },
+        skip: pageNo * pageSize,
+        take: pageSize
     });
 
-    return vehicles;
+    const response: VehicleList = {
+        vehicles,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+        currentPage: pageNo
+    }
+
+    return response;
 }
 
 export const updateVehicleById = async (id: number, vehicleData: Partial<Vehicle>): Promise<Vehicle | null> => {

@@ -36,7 +36,11 @@ const VehicleDetails = () => {
 
             setVehicle(response.vehicle);
         } catch (err: any) {
-            console.error(err.message);
+            if (err.response.status === 500) {
+                console.error(err.response?.data?.message)
+            } else {
+                console.error(err.message);
+            }
         } finally {
             setLoading(false);
         }
