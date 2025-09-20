@@ -1,14 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Login from './pages/Login';
+import { AuthProvider } from './context/AuthProvider';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index element={<Home />} />
-      </ Routes>
-    </ BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<PrivateRoute element={<Home />} />} />
+          <Route path='/login' element={<Login />} />
+        </ Routes>
+      </ BrowserRouter>
+    </AuthProvider>
   )
 }
 
