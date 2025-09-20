@@ -3,7 +3,7 @@ import { register, login, logout, refreshAccessToken } from "../controllers/auth
 
 const router = express.Router();
 
-router.post('/register', register);
+// router.post('/register', register);
 router.post('/login', login);
 router.get('/logout', logout);
 router.get('/refresh-token', refreshAccessToken)
