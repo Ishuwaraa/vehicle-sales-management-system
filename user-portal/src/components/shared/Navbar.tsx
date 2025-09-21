@@ -1,10 +1,34 @@
+import { Car, Search, Home } from "lucide-react";
+
 const Navbar = () => {
-    return ( 
-        <div>
-            <a href="/" className="mr-3">Home</a>
-            <a href="/search">Search</a>
-        </div>
-     );
-}
- 
+    return (
+        <nav className="bg-white shadow-lg border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                    <div className="flex items-center hover:cursor-pointer" onClick={() => window.location.href = '/'}>
+                        <Car className="h-8 w-8 text-blue-600 mr-2" />
+                        <span className="text-xl font-bold text-gray-900">AutoDeals</span>
+                    </div>
+                    <div className="flex space-x-4">
+                        <a 
+                            href="/" 
+                            className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+                        >
+                            <Home className="h-4 w-4 mr-1" />
+                            Home
+                        </a>
+                        <a 
+                            href="/search" 
+                            className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
+                        >
+                            <Search className="h-4 w-4 mr-1" />
+                            Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
+};
+
 export default Navbar;

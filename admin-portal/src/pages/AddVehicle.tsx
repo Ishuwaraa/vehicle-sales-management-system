@@ -3,6 +3,7 @@ import Navbar from "../components/shared/Navbar";
 import Camera from "../assets/camera-icon.png";
 import { useVehicleService } from "../services/vehicleService";
 import type { AddVehicleRequest } from "../types/vehicle.types";
+import { Edit, Sparkles } from "lucide-react";
 
 interface ImageFile {
     file: File;
@@ -18,9 +19,10 @@ const AddVehicle = () => {
     const [modelName, setModelName] = useState<string>('');
     const [color, setColor] = useState<string>('');
     const [engineSize, setEngineSize] = useState<string>('');
-    const [year, setYear] = useState<number>();
-    const [price, setPrice] = useState<number>();
+    const [year, setYear] = useState<number>(0);
+    const [price, setPrice] = useState<number>(0);
     const [description, setDescription] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleImageUpload = (setter: any, maxImages: number) => (event: ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(event.target.files || []);
@@ -103,6 +105,7 @@ const AddVehicle = () => {
         }
 
         try {
+            setLoading(true);
             const data: Partial<AddVehicleRequest> = {
                 vehicleType,
                 brand,
@@ -126,64 +129,185 @@ const AddVehicle = () => {
             } else {
                 console.error(err.message);
             }
+        } finally {
+            setLoading(false);
         }
     }
 
     return ( 
-        <>
-        <Navbar />
-        <div>
-            <button onClick={() => getAIDescription()}>Generate Description</button>
-        </div>
-
-        <form onSubmit={(e: FormEvent<HTMLFormElement>) => handleSubmit(e)}>
-            <div className="p-4">
-                <h3 className="text-lg font-semibold mb-4">Vehicle Images</h3>
-                <div className="flex gap-2">
-                {images.map((image, index) => (
-                    <div key={index} className="relative w-32 h-32">
-                    <img 
-                        src={image.preview} 
-                        className="w-full h-full object-cover rounded"
-                    />
-                    <button 
-                        type="button"
-                        onClick={() => removeImage(setImages)(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                    >
-                        ×
-                    </button>
-                    </div>
-                ))}
-
-                {images.length < 4 && (
-                    <label className="w-32 h-32 border-2 border-dashed rounded flex items-center justify-center cursor-pointer">
-                    <input 
-                        type="file" 
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        onChange={handleImageUpload(setImages, 4)}
-                    />
-                    <img src={Camera} alt='camera' className='w-6 h-6'/>  
-                    </label>
-                )}
+        <div className="min-h-screen bg-gray-50">
+            <Navbar />
+            
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Add Vehicle</h1>
                 </div>
+
+                {/* Images Section */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Vehicle Images</h3>
+                    <div className="p-4">
+                        <div className="flex gap-2">
+                            {images.map((image, index) => (
+                                <div key={index} className="relative w-32 h-32">
+                                <img 
+                                    src={image.preview} 
+                                    className="w-full h-full object-cover rounded"
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => removeImage(setImages)(index)}
+                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                >
+                                    ×
+                                </button>
+                                </div>
+                            ))}
+
+                            {images.length < 4 && (
+                                <label className="w-32 h-32 border-2 border-dashed rounded flex items-center justify-center cursor-pointer">
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    multiple
+                                    className="hidden"
+                                    onChange={handleImageUpload(setImages, 4)}
+                                />
+                                <img src={Camera} alt='camera' className='w-6 h-6'/>  
+                                </label>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <form onSubmit={(e: FormEvent<HTMLFormElement>) => handleSubmit(e)}>
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Vehicle Details</h3>
+                        
+                        <div className="grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Type</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter vehicle type" 
+                                    value={vehicleType} 
+                                    required 
+                                    onChange={(e) => setVehicleType(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter vehicle brand" 
+                                    value={brand} 
+                                    required 
+                                    onChange={(e) => setBrand(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Model Name</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter vehicle model name" 
+                                    value={modelName} 
+                                    required 
+                                    onChange={(e) => setModelName(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter vehicle color" 
+                                    value={color} 
+                                    required 
+                                    onChange={(e) => setColor(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Engine Size</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter vehicle engine size" 
+                                    value={engineSize} 
+                                    required 
+                                    onChange={(e) => setEngineSize(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                                <input 
+                                    type="number" 
+                                    placeholder="Enter vehicle year" 
+                                    value={year} 
+                                    required 
+                                    onChange={(e) => setYear(parseInt(e.target.value))}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Price (Rs.)</label>
+                                <input 
+                                    type="number" 
+                                    placeholder="Enter vehicle price" 
+                                    value={price} 
+                                    required 
+                                    onChange={(e) => setPrice(parseInt(e.target.value))}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mt-6">
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-sm font-medium text-gray-700">Description</label>
+                                <button 
+                                    type="button" 
+                                    onClick={() => getAIDescription()}
+                                    disabled={loading}
+                                    className="flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium hover:cursor-pointer"
+                                >
+                                    <Sparkles className="h-4 w-4 mr-1" />
+                                    {loading ? 'Generating...' : 'Generate AI Description'}
+                                </button>
+                            </div>
+                            <textarea 
+                                value={description} 
+                                onChange={(e) => setDescription(e.target.value)} 
+                                required 
+                                rows={4} 
+                                placeholder="Vehicle description"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-4 justify-end">
+                        <button 
+                            type="submit"
+                            className="flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+                        >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Add Vehicle
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <input type="text" placeholder="enter vehicle type" required onChange={(e) => setVehicleType(e.target.value)}/><br />
-            <input type="text" placeholder="enter vehicle brand" required onChange={(e) => setBrand(e.target.value)}/><br />
-            <input type="text" placeholder="enter vehicle model name" required onChange={(e) => setModelName(e.target.value)}/><br />
-            <input type="text" placeholder="enter vehicle color" required onChange={(e) => setColor(e.target.value)}/><br />
-            <input type="text" placeholder="enter vehicle engine size" required onChange={(e) => setEngineSize(e.target.value)}/><br />
-            <input type="number" placeholder="enter vehicle year" required onChange={(e) => setYear(parseInt(e.target.value))}/><br />
-            <input type="number" placeholder="enter vehicle price" required onChange={(e) => setPrice(parseInt(e.target.value))}/><br />
-
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="AI description"/><br />
-
-            <button type="submit">Add Vehicle</button>
-        </form>
-        </>
+        </div>
      );
 }
  

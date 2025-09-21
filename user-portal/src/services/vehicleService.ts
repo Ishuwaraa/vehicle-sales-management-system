@@ -1,35 +1,54 @@
+import { AxiosError } from "axios";
 import { axiosInstance } from "../lib/axios";
 import type { searchRequest } from "../types/search.types";
 import type { Vehicle, VehicleList } from "../types/vehicle.types";
 
 export const vehicleService = {
     getAllVehicles: async (page: number): Promise<{ vehicleList: VehicleList | null, status: number, message?: string }> => {
-        const response = await axiosInstance.get(`/vehicle?page=${page}&size=5`);
+        try {
+            const response = await axiosInstance.get(`/vehicle?page=${page}&size=5`);
+    
+            return { vehicleList: response.data, status: response.status };
+        } catch (err: any) {
+            console.log(err.response);
 
-        if (response.status !== 200) {
-            return { vehicleList: null, status: response.status, message: response.data?.message };
+            if (err instanceof AxiosError) {
+                return { vehicleList: null, status: err.response!.status, message: err.response!.data.message };
+            }
+
+            return { vehicleList: null, status: err.response.status, message: err.message };
         }
-
-        return { vehicleList: response.data, status: response.status };
     },
 
     getVehicleById: async (id: number): Promise<{ vehicle: Vehicle | null, status: number, message?: string }> => {
-        const response = await axiosInstance.get(`/vehicle/${id}`);
-        
-        if (response.status !== 200) {
-            return { vehicle: null, status: response.status, message: response.data?.message };
+        try {
+            const response = await axiosInstance.get(`/vehicle/${id}`);
+            
+            return { vehicle: response.data, status: response.status };
+        } catch (err: any) {
+            console.log(err.response);
+
+            if (err instanceof AxiosError) {
+                return { vehicle: null, status: err.response!.status, message: err.response!.data.message };
+            }
+
+            return { vehicle: null, status: err.response.status, message: err.message };
         }
-        
-        return { vehicle: response.data, status: response.status };
     },
 
     searchVehicles: async (searchRequest: searchRequest): Promise<{ vehicleList: VehicleList | null, status: number, message?: string }> => {
-        const response = await axiosInstance.post('/vehicle/search', searchRequest);
+        try {
+            const response = await axiosInstance.post('/vehicle/search', searchRequest);
+    
+            return { vehicleList: response.data, status: response.status };
+        } catch (err: any) {
+            console.log(err.response);
 
-        if (response.status !== 200) {
-            return { vehicleList: null, status: response.status, message: response.data?.message };
+            if (err instanceof AxiosError) {
+                return { vehicleList: null, status: err.response!.status, message: err.response!.data.message };
+            }
+
+            return { vehicleList: null, status: err.response.status, message: err.message };
         }
-
-        return { vehicleList: response.data, status: response.status };
     }
 }
