@@ -23,7 +23,6 @@ const Login = () => {
                 password
             }
             const response = await authService.login(loginRequest);
-            console.log('response ', response)
 
             if (response.status === 404 || response.status === 401) {
                 alert('Invalid email or password');

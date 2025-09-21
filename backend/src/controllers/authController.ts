@@ -1,4 +1,4 @@
-import User, { UserRole } from "../models/userModel.js"
+import User from "../models/userModel.js"
 import { genAccessToken, genRefreshToken } from "../middlewares/authMiddleware.js";
 import bcrypt from "bcrypt";
 import { Request, Response, CookieOptions } from 'express';
@@ -8,21 +8,20 @@ import { addUser, findUserByEmail, findUserById } from "../repositories/userRepo
 
 interface JwtPayload {
     id: string;
-    role: string;
 }
 
+//TODO: check strict vs lax
 const cookieOptions: CookieOptions = {
     httpOnly: true, 
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
     maxAge: 3 * 24 * 60 * 60 * 1000    //exp in 3d
 }
 
-const register = async (req: Request, res: Response): Promise<void> => {
+const register = async (req: Request, res: Response) => {
     const { name, email, phone, password }: UserRegister = req.body;
     if (!name || !email || !phone || !password) {
-        res.status(400).json({ message: 'All fields are required.' });
-        return;
+        return res.status(400).json({ message: 'All fields are required.' });
     }
 
     const convEmail = email.toLowerCase().trim();
@@ -30,22 +29,20 @@ const register = async (req: Request, res: Response): Promise<void> => {
     try{
         const exists = await findUserByEmail(convEmail);
         if(exists) {
-            res.status(409).json({ message: 'Email already exists' });
-            return;
+            return res.status(409).json({ message: 'Email already exists' });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);                
 
         
-        const newUser = await addUser({ name, email: convEmail, phone, password: hash, role: UserRole.ADMIN });
+        const newUser = await addUser({ name, email: convEmail, phone, password: hash });
         if(!newUser) {
-            res.status(500).json({ message: 'Account creation failed' });
-            return;
+            return res.status(500).json({ message: 'Account creation failed' });
         }
 
-        const accessToken = genAccessToken(newUser.id, newUser.role);
-        const refreshToken = genRefreshToken(newUser.id, newUser.role);
+        const accessToken = genAccessToken(newUser.id);
+        const refreshToken = genRefreshToken(newUser.id);
 
         res.cookie("refreshToken", refreshToken, cookieOptions);   
         res.status(201).json({ accessToken, name: newUser.name, email: newUser.email });
@@ -55,11 +52,10 @@ const register = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const login = async(req: Request, res: Response): Promise<void> => {
+const login = async(req: Request, res: Response) => {
     const { email, password }: UserLogin = req.body;
     if (!email || !password) {
-        res.status(400).json({ message: 'All fields are required.' });
-        return;
+        return res.status(400).json({ message: 'All fields are required.' })
     }
 
     const convEmail = email.toLowerCase().trim();
@@ -67,18 +63,16 @@ const login = async(req: Request, res: Response): Promise<void> => {
     try {
         const user = await findUserByEmail(convEmail);
         if(!user) {
-            res.status(404).json({ message: 'Invalid email or password' });
-            return;
+            return res.status(404).json({ message: 'Invalid email or password' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if(!match) {
-            res.status(401).json({ message: 'Invalid email or password' });
-            return;
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const accessToken = genAccessToken(user.id, user.role);
-        const refreshToken = genRefreshToken(user.id, user.role);
+        const accessToken = genAccessToken(user.id);
+        const refreshToken = genRefreshToken(user.id);
         
         res.cookie("refreshToken", refreshToken, cookieOptions);
         res.status(200).json({ accessToken, id: user.id});
@@ -87,12 +81,11 @@ const login = async(req: Request, res: Response): Promise<void> => {
     }
 }
 
-const logout = (req: Request, res: Response): void => {
+const logout = (req: Request, res: Response) => {
     const cookies = req.cookies;
 
     if(!cookies?.refreshToken) {
-        res.status(401).json({ message: 'No token' });
-        return
+        return res.status(401).json({ message: 'No token' });
     }
 
     res.clearCookie('refreshToken', {
@@ -103,12 +96,11 @@ const logout = (req: Request, res: Response): void => {
     res.sendStatus(200);    
 }
 
-const refreshAccessToken = (req: Request, res: Response): void => {
+const refreshAccessToken = (req: Request, res: Response) => {
     const cookies = req.cookies;
 
     if(!cookies?.refreshToken) {
-        res.status(401).json({ message: 'Unauthorized' });
-        return;
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const refreshToken = cookies.refreshToken;
@@ -131,12 +123,11 @@ const refreshAccessToken = (req: Request, res: Response): void => {
         try {
             const user = await findUserById(payload.id);
             if(!user) {
-                res.status(404).json({ message: 'User not found' });
-                return;
+                return res.status(404).json({ message: 'User not found' });
             }
     
-            const accessToken = genAccessToken(user.id, user.role);
-            const refreshToken = genRefreshToken(user.id, user.role);
+            const accessToken = genAccessToken(user.id);
+            const refreshToken = genRefreshToken(user.id);
     
             res.cookie('refreshToken', refreshToken, cookieOptions)
             res.status(200).json({ accessToken });

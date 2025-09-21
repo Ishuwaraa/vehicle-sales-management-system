@@ -80,9 +80,13 @@ const Home = () => {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">All Vehicles</h1>
-                        {vehicleData?.total && (
+                        {vehicleData?.total ? (
                             <p className="text-gray-600 mt-1">
                                 Showing {allVehicles.length} of {vehicleData.total} vehicles
+                            </p>
+                        ) : (
+                            <p className="text-gray-600 mt-1">
+                                No vehicles to show
                             </p>
                         )}
                     </div>

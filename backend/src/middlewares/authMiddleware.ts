@@ -4,22 +4,20 @@ import { Request, Response, NextFunction } from 'express';
 declare global {
     namespace Express {
         interface Request {
-        userId?: string;
-        userRole?: string;
+            userId?: string;
         }
     }
 }
 
 interface JwtPayload {
     id: string;
-    role: string;
 }
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET!;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET!;
 
-const genAccessToken = (id: string, role: string) => jwt.sign({ id, role }, accessTokenSecret, { expiresIn: '5m' });
-const genRefreshToken = (id: string, role: string) => jwt.sign({ id, role }, refreshTokenSecret, { expiresIn: '3d' });
+const genAccessToken = (id: string ) => jwt.sign({ id }, accessTokenSecret, { expiresIn: '1m' });
+const genRefreshToken = (id: string ) => jwt.sign({ id }, refreshTokenSecret, { expiresIn: '3d' });
 
 const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
@@ -42,7 +40,6 @@ const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
         
         const payload = data as JwtPayload;
         req.userId = payload.id;
-        req.userRole = payload.role;
         next();
     })
 }

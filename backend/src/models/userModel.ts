@@ -1,10 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm"
 
-export enum UserRole {
-    ADMIN = "admin",
-    CUSTOMER = "customer",
-}
-
 @Entity()
 export default class User {
     @PrimaryGeneratedColumn("uuid")
@@ -21,9 +16,6 @@ export default class User {
 
     @Column({ type: "varchar", length: 255 })
     password!: string
-
-    @Column({ type: "enum", enum: UserRole, default: UserRole.CUSTOMER })
-    role!: UserRole
 
     @CreateDateColumn()
     createdAt!: Date

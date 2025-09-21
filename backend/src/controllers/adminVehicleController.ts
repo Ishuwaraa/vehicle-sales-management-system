@@ -8,18 +8,10 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
-const isNotAnAdmin = (req: Request): Boolean => {
-    return !(req.userRole === 'admin');
-}
-
 const getAllVehicles = async (req: Request, res: Response) => {
     const sortBy = (req.query.sortBy as string) || "DESC";
     const page = parseInt(req.query.page as string) || 0;
     const size = parseInt(req.query.size as string) || 10;
-
-    if (isNotAnAdmin(req)) {
-        return res.status(403).json({ message: "Permission denied"});
-    }
 
     if (page < 0) {
         return res.status(400).json({ message: "Page number cannot be negative" });
@@ -49,10 +41,6 @@ const getAllVehicles = async (req: Request, res: Response) => {
 const getVehicleById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    if (isNotAnAdmin(req)) {
-        return res.status(403).json({ message: "Permission denied"});
-    }
-
     const vehicleId = parseInt(id);
     if (!id || isNaN(vehicleId) || vehicleId <= 0) {
         return res.status(400).json({ message: "Invalid Id" });
@@ -77,10 +65,6 @@ const getVehicleById = async (req: Request, res: Response) => {
 //TODO: improve guardrails
 const generateAIDescription = async (req: Request, res: Response) => {
     const vehicle: AddVehicle = req.body;
-
-    if (isNotAnAdmin(req)) {
-        return res.status(403).json({ message: "Permission denied"});
-    }
 
     try {
         const response = await client.responses.create({
@@ -125,11 +109,6 @@ const addVehicle = async (req: Request, res: Response) => {
         });
     }
 
-    if (isNotAnAdmin(req)) {
-        await deleteImages(images);
-        return res.status(403).json({ message: "Permission denied"});
-    }
-
     try {
         const vehicle = await createVehicle({
             vehicleType: data.vehicleType,
@@ -154,10 +133,6 @@ const updateVehicle = async (req: Request, res: Response) => {
     const { id } = req.params;
     const data: UpdateVehicle = req.body;
 
-    if (isNotAnAdmin(req)) {
-        return res.status(403).json({ message: "Permission denied"});
-    }
-
     const vehicleId = parseInt(id);
     if (!id || isNaN(vehicleId) || vehicleId <= 0) {
         return res.status(400).json({ message: "Invalid Id" });
@@ -179,10 +154,6 @@ const updateVehicle = async (req: Request, res: Response) => {
 
 const deleteVehicle = async (req: Request, res: Response) => {
     const { id } = req.params;
-
-    if (isNotAnAdmin(req)) {
-        return res.status(403).json({ message: "Permission denied"});
-    }
 
     const vehicleId = parseInt(id);
     if (!id || isNaN(vehicleId) || vehicleId <= 0) {
