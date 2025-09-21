@@ -135,3 +135,13 @@ This project implements a **Vehicle Sales Management System**. The system allows
 * Admin authentication is limited to username/password JWT login.
 * AI-generated descriptions rely on OpenAI API availability.
 
+---
+
+## Screenshots
+
+<img width="1913" height="1217" alt="Image" src="https://github.com/user-attachments/assets/26c38f61-858c-4e06-a938-3b59f607f4d4" />
+<img width="1913" height="1693" alt="Image" src="https://github.com/user-attachments/assets/5d961e23-eabe-47b5-8d67-1e7bac20bae9" />
+<img width="1913" height="916" alt="Image" src="https://github.com/user-attachments/assets/5eaf6b4e-f4b1-405d-b9fb-099f4b3b69c2" />
+<img width="1913" height="1169" alt="Image" src="https://github.com/user-attachments/assets/b18319be-1fc4-44b8-92c2-ac416b7c091d" />
+<img width="1913" height="1313" alt="Image" src="https://github.com/user-attachments/assets/2edf56c3-b356-4c4e-8fa9-b2e53577668f" />
+<img width="1913" height="1579" alt="Image" src="https://github.com/user-attachments/assets/d3eb41de-2ae8-4d0d-bf79-8b8063816e36" />
