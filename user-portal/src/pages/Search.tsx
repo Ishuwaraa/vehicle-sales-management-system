@@ -80,6 +80,7 @@ const Search = () => {
         setLoadForInputChange(false);
         setFilterValue(value);
         setFilterType(type);
+        setSearchTerm('');
     }
 
     const loadMore = () => {
@@ -156,31 +157,31 @@ const Search = () => {
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="below 1000" 
-                                    onChange={() => onFilterChange('below 1000', 'price')}
+                                    value="Budget" 
+                                    onChange={() => onFilterChange('Budget', 'price')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">Below 1000</span>
+                                <span className="ml-2 text-sm text-gray-700">Budget</span>
                             </label>
                             <label className="flex items-center cursor-pointer">
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="1000-2000" 
-                                    onChange={() => onFilterChange('1000-2000', 'price')}
+                                    value="Mid-Range" 
+                                    onChange={() => onFilterChange('Mid-Range', 'price')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">1000-2000</span>
+                                <span className="ml-2 text-sm text-gray-700">Mid Range</span>
                             </label>
                             <label className="flex items-center cursor-pointer">
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="above 2000" 
-                                    onChange={() => onFilterChange('above 2000', 'price')}
+                                    value="Luxury" 
+                                    onChange={() => onFilterChange('Luxury', 'price')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">Above 2000</span>
+                                <span className="ml-2 text-sm text-gray-700">Luxury</span>
                             </label>
                         </div>
                     </div>
@@ -193,18 +194,18 @@ const Search = () => {
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="blue" 
-                                    onChange={() => onFilterChange('blue', 'color')}
+                                    value="White" 
+                                    onChange={() => onFilterChange('White', 'color')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">Blue</span>
+                                <span className="ml-2 text-sm text-gray-700">White</span>
                             </label>
                             <label className="flex items-center cursor-pointer">
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="red" 
-                                    onChange={() => onFilterChange('red', 'color')}
+                                    value="Red" 
+                                    onChange={() => onFilterChange('Red', 'color')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
                                 <span className="ml-2 text-sm text-gray-700">Red</span>
@@ -213,11 +214,11 @@ const Search = () => {
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="green" 
-                                    onChange={() => onFilterChange('green', 'color')}
+                                    value="Black" 
+                                    onChange={() => onFilterChange('Black', 'color')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">Green</span>
+                                <span className="ml-2 text-sm text-gray-700">Black</span>
                             </label>
                         </div>
                     </div>
@@ -230,31 +231,31 @@ const Search = () => {
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="500cc" 
-                                    onChange={() => onFilterChange('500cc', 'enginesize')}
+                                    value="800cc" 
+                                    onChange={() => onFilterChange('800cc', 'enginesize')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">500cc</span>
+                                <span className="ml-2 text-sm text-gray-700">800cc</span>
                             </label>
                             <label className="flex items-center cursor-pointer">
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="700cc" 
-                                    onChange={() => onFilterChange('700cc', 'enginesize')}
+                                    value="1500cc" 
+                                    onChange={() => onFilterChange('1500cc', 'enginesize')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">700cc</span>
+                                <span className="ml-2 text-sm text-gray-700">1500cc</span>
                             </label>
                             <label className="flex items-center cursor-pointer">
                                 <input 
                                     type="radio" 
                                     name="filter" 
-                                    value="1000cc" 
-                                    onChange={() => onFilterChange('1000cc', 'enginesize')}
+                                    value="2000cc" 
+                                    onChange={() => onFilterChange('2000cc', 'enginesize')}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                 />
-                                <span className="ml-2 text-sm text-gray-700">1000cc</span>
+                                <span className="ml-2 text-sm text-gray-700">2000cc</span>
                             </label>
                         </div>
                     </div>

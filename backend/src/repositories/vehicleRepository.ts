@@ -45,7 +45,7 @@ export const findVehicleBySearchParam = async (searchRequest: searchRequest): Pr
     const searchField = searchRequest.searchField.toLowerCase();
     let whereClause: any = {};
     let minPrice: number = 0;
-    let maxPrice: number = 1000;
+    let maxPrice: number = 5000000;
 
     switch (searchField) {
         case 'brand':
@@ -72,13 +72,13 @@ export const findVehicleBySearchParam = async (searchRequest: searchRequest): Pr
             break;
         case 'price':
             switch (searchRequest.searchTerm) {
-                case '1000-2000':
-                    minPrice = 1001;
-                    maxPrice = 2000;
+                case 'Mid-Range':
+                    minPrice = 5000001;
+                    maxPrice = 15000000;
                     break;
-                case 'above 2000':
-                    minPrice = 2001;
-                    maxPrice = 1000000000000;
+                case 'Luxury':
+                    minPrice = 15000001;
+                    maxPrice = 400000000000;
                     break;
             }
 

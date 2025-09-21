@@ -16,7 +16,7 @@ interface JwtPayload {
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET!;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET!;
 
-const genAccessToken = (id: string ) => jwt.sign({ id }, accessTokenSecret, { expiresIn: '1m' });
+const genAccessToken = (id: string ) => jwt.sign({ id }, accessTokenSecret, { expiresIn: '5m' });
 const genRefreshToken = (id: string ) => jwt.sign({ id }, refreshTokenSecret, { expiresIn: '3d' });
 
 const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
