@@ -13,7 +13,7 @@ const useRefreshToken = (): (() => Promise<RefreshResponse>) => {
     const refresh = async (): Promise<RefreshResponse> => {
         
         const response = await axiosInstance.get('/auth/refresh-token');
-        console.log('refresh end point ', response);
+        // console.log('refresh end point ', response);
 
         if (response.status !== 200) {
             return { accessToken: null, status: response.status, message: response.data?.message };

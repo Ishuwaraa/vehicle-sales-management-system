@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { authService } from "../services/authService";
 import type { UserLogin } from "../types/user.types";
 import useAuth from "../hooks/useAuth";
@@ -13,7 +13,7 @@ const Login = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         try {
@@ -24,15 +24,17 @@ const Login = () => {
             const response = await authService.login(loginRequest);
             console.log('response ', response)
 
-            if (response.status !== 200) {
+            if (response.status === 404 || response.status === 401) {
+                alert('Invalid email or password');
                 console.error(response.message);
                 return
+            } else if (response.status === 200) {
+                const accessToken = response.user!.accessToken;
+                setAuth({ accessToken: accessToken })
+    
+                navigate(from, { replace: true });
             }
 
-            const accessToken = response.user!.accessToken;
-            setAuth({ accessToken: accessToken })
-
-            navigate(from, { replace: true });
         } catch (err: any) {
             if (err.response.status === 500) {
                 console.error(err.response?.data?.message)

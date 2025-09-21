@@ -113,15 +113,15 @@ const Search = () => {
                 <div className="mb-3">
                     <span className="mr-3">Price (Rs.)</span>
                     <label>
-                        <input type="radio" name="filter" value="blue" onChange={() => onFilterChange('below 1000', 'price')} />
+                        <input type="radio" name="filter" value="below 1000" onChange={() => onFilterChange('below 1000', 'price')} />
                         Below 1000
                     </label>
                     <label>
-                        <input type="radio" name="filter" value="red" onChange={() => onFilterChange('1000-2000', 'price')} />
+                        <input type="radio" name="filter" value="1000-2000" onChange={() => onFilterChange('1000-2000', 'price')} />
                         1000-2000
                     </label>
                     <label>
-                        <input type="radio" name="filter" value="green" onChange={() => onFilterChange('above 2000', 'price')} />
+                        <input type="radio" name="filter" value="'above 2000" onChange={() => onFilterChange('above 2000', 'price')} />
                         Above 2000
                     </label>
                 </div>
@@ -143,15 +143,15 @@ const Search = () => {
                 <div className="mb-3">
                     <span className="mr-3">Engine Size</span>
                     <label>
-                        <input type="radio" name="filter" value="blue" onChange={() => onFilterChange('500cc', 'enginesize')} />
+                        <input type="radio" name="filter" value="500cc" onChange={() => onFilterChange('500cc', 'enginesize')} />
                         500cc
                     </label>
                     <label>
-                        <input type="radio" name="filter" value="red" onChange={() => onFilterChange('700cc', 'enginesize')} />
+                        <input type="radio" name="filter" value="700cc" onChange={() => onFilterChange('700cc', 'enginesize')} />
                         700cc
                     </label>
                     <label>
-                        <input type="radio" name="filter" value="green" onChange={() => onFilterChange('1000cc', 'enginesize')} />
+                        <input type="radio" name="filter" value="1000cc" onChange={() => onFilterChange('1000cc', 'enginesize')} />
                         1000cc
                     </label>
                 </div>

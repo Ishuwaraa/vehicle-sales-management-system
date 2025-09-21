@@ -2,10 +2,12 @@ import useRefreshToken from './useRefresh';
 import useAuth from './useAuth';
 import { useEffect } from 'react';
 import { axiosPrivate } from '../lib/axios';
+import { useNavigate } from 'react-router-dom';
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
-    const { auth, setAuth }: any = useAuth();
+    const { auth }: any = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
@@ -26,7 +28,7 @@ const useAxiosPrivate = () => {
                 //if access token expired or invalid and prevRequest has not already been retried
                 if(error?.response?.status === 403 && !prevRequest?.sent) {
                     const errorMessage = error?.response?.data?.message;
-                    console.log(errorMessage);
+                    // console.log(errorMessage);
 
                     if (errorMessage === 'Token expired') {
                         prevRequest.sent = true;    //preventing the interceptior from repeatedly retrying the same req in case of multiple 403 responses
@@ -36,8 +38,8 @@ const useAxiosPrivate = () => {
 
                             if (refreshResponse.status !== 200) {
                                 console.error(refreshResponse.message);
-                                setAuth({ accessToken: null });
-                                window.location.href = '/login';
+                                localStorage.removeItem('token');
+                                navigate('/login', { replace: true })
                                 return
                             }
 
@@ -45,13 +47,13 @@ const useAxiosPrivate = () => {
                             return axiosPrivate(prevRequest);
                         } catch (err) {
                             //refresh fails logout
-                            setAuth({ accessToken: null });
-                            window.location.href = '/login';
+                            localStorage.removeItem('token');
+                            navigate('/login', { replace: true })
                             return Promise.reject(err);
                         }
                     } else if (errorMessage === 'Invalid token') {
-                        setAuth({ accessToken: null });
-                        window.location.href = '/login';
+                        localStorage.removeItem('token');
+                        navigate('/login', { replace: true })
                         return Promise.reject(error);
                     }
                 }

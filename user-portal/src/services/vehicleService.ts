@@ -4,7 +4,7 @@ import type { Vehicle, VehicleList } from "../types/vehicle.types";
 
 export const vehicleService = {
     getAllVehicles: async (page: number): Promise<{ vehicleList: VehicleList | null, status: number, message?: string }> => {
-        const response = await axiosInstance.get(`/vehicle?page=${page}&size=1`);
+        const response = await axiosInstance.get(`/vehicle?page=${page}&size=5`);
 
         if (response.status !== 200) {
             return { vehicleList: null, status: response.status, message: response.data?.message };
