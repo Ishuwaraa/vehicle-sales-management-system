@@ -31,3 +31,14 @@ export interface AddVehicleRequest {
     description: string;
     images: string[],
 }
+
+export interface UpdateVehicleRequest {
+    vehicleType: string;
+    brand: string;
+    modelName: string;
+    color: string;
+    engineSize: string;
+    year: number;
+    price: number;
+    description: string;
+}

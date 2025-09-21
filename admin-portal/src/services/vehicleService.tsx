@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import type { AddVehicleRequest, Vehicle, VehicleList } from "../types/vehicle.types";
+import type { AddVehicleRequest, UpdateVehicleRequest, Vehicle, VehicleList } from "../types/vehicle.types";
 
 export const useVehicleService = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -8,7 +8,7 @@ export const useVehicleService = () => {
     return {
         getAllVehicles: async (page: number, sortBy: string = 'DESC'): Promise<{ vehicleList: VehicleList | null, status: number, message?: string }> => {
             try {
-                const response = await axiosPrivate.get(`/admin/vehicle?sortBy=${sortBy}&page=${page}&size=1`);
+                const response = await axiosPrivate.get(`/admin/vehicle?sortBy=${sortBy}&page=${page}&size=5`);
     
                 return { vehicleList: response.data, status: response.status };
             } catch (err: any) {
@@ -71,6 +71,38 @@ export const useVehicleService = () => {
                 }
 
                 return { description: null, status: err.response.status, message: err.message };
+            }
+        }, 
+
+        editVehicle: async (editVehicleRequest: UpdateVehicleRequest, id: number): Promise<{ vehicle: Vehicle | null, status: number, message?: string }> => {
+            try {
+                const response = await axiosPrivate.put(`/admin/vehicle/${id}`, editVehicleRequest);
+
+                return { vehicle: response.data, status: response.status }
+            } catch (err: any) {
+                console.log(err.response);
+
+                if (err instanceof AxiosError) {
+                    return { vehicle: null, status: err.response!.status, message: err.response!.data.message };
+                }
+
+                return { vehicle: null, status: err.response.status, message: err.message };
+            }
+        },
+
+        deleteVehicle: async (id: number): Promise<{ status: number, message?: string }> => {
+            try {
+                const response = await axiosPrivate.delete(`/admin/vehicle/${id}`);
+
+                return { status: response.status, message: response.data?.message }
+            } catch (err: any) {
+                console.log(err.response);
+
+                if (err instanceof AxiosError) {
+                    return { status: err.response!.status, message: err.response!.data.message };
+                }
+
+                return { status: err.response.status, message: err.message };
             }
         }
     }

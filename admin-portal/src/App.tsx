@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import { AuthProvider } from './context/AuthProvider';
 import PrivateRoute from './components/PrivateRoute';
 import AddVehicle from './pages/AddVehicle';
+import EditVehicle from './pages/EditVehicle';
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<PrivateRoute element={<Home />} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/vehicle/add' element={<PrivateRoute element={<AddVehicle />} />} />
+          <Route path='/vehicle/edit' element={<PrivateRoute element={<EditVehicle />} />} />
         </ Routes>
       </ BrowserRouter>
     </AuthProvider>
